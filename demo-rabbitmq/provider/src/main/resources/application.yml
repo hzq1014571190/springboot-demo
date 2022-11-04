@@ -1,0 +1,14 @@
+server:
+  port: 8332
+spring:
+  application:
+    name: provider-service
+    # 配置 rabbitmq
+  rabbitmq:
+    host: 192.168.200.7
+    port: 5672
+    # 注意：
+#        默认账户 guest 只能本地访问 不能远程访问使用
+#        需在web管理端再新建一个账号使用
+    username: hzq
+    password: hzq

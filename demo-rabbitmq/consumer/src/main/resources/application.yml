@@ -1,0 +1,13 @@
+server:
+  port: 8331
+
+spring:
+  application:
+    name: consumer-service
+  # 配置 rabbitmq
+  rabbitmq:
+    host: 192.168.200.7
+    port: 5672
+    username: hzq
+    password: hzq
+
