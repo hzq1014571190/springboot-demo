@@ -5,10 +5,18 @@ spring:
     name: provider-service
     # 配置 rabbitmq
   rabbitmq:
-    host: 192.168.200.7
+    host: 192.168.200.6
     port: 5672
     # 注意：
 #        默认账户 guest 只能本地访问 不能远程访问使用
 #        需在web管理端再新建一个账号使用
-    username: hzq
-    password: hzq
+    username: admin
+    password: admin
+
+    #开启消息的return机制
+    publisher-returns: true
+    #在需要使用消息的return机制时候，此参数必须设置为true
+    template:
+      mandatory: true
+    #开启消息的confirm机制
+    publisher-confirm-type: correlated

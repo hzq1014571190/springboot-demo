@@ -1,10 +1,14 @@
 package com.hzq.controller;
 
-import org.springframework.amqp.core.AmqpTemplate;
+import com.hzq.common.MQSender;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Administrator
@@ -13,11 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class SendMessageController {
 
     @Autowired
-    private AmqpTemplate rabbitTemplate;
+    private MQSender mqSender;
+
 
     @RequestMapping("/send/{msg}")
     public String sendMessage(@PathVariable("msg")String message){
-        rabbitTemplate.convertAndSend("TestDirectExchange", "TestDirectRoutingKey", "hello " + message);
+        mqSender.sendMessage(message);
         return "success";
     }
 }

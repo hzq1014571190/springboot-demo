@@ -6,8 +6,13 @@ spring:
     name: consumer-service
   # 配置 rabbitmq
   rabbitmq:
-    host: 192.168.200.7
+    host: 192.168.200.6
     port: 5672
-    username: hzq
-    password: hzq
+    username: admin
+    password: admin
 
+    # 开启手动确认
+    # 当收到消息时 消费端处理完成后 再返回 ack
+    listener:
+      simple:
+        acknowledge-mode: manual
