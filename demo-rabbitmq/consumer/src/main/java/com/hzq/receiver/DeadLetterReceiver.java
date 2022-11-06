@@ -10,14 +10,15 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-
 /**
- * @author Administrator
- * 消费消息
+ * @ClassName com.hzq.receiver.DeadLetterReceiver
+ * @Date: 2022/11/6 11:40
+ * @Author hzq
+ * @Description 死信消费
  */
 @Component
-@RabbitListener(queues = RabbitConstant.TEST_DIRECT_QUEUE)
-public class DirectReceiver {
+@RabbitListener(queues = {RabbitConstant.TEST_DEAD_LETTER_DIRECT_QUEUE})
+public class DeadLetterReceiver {
 
     @RabbitHandler
     public void process(String message, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) Long deliveryTag) throws IOException {
@@ -33,10 +34,8 @@ public class DirectReceiver {
             // deliveryTag：表示消息投递序号，每次消费消息或者消息重新投递后，deliveryTag 都会增加。
             // 手动消息确认模式下，我们可以对指定 deliveryTag 的消息进行 ack、nack、reject 等操作。
             // multiple：是否批量确认，值为 true 则会一次性 ack 所有小于当前消息 deliveryTag 的消息。
-
             channel.basicAck(deliveryTag,false);
-
-            System.out.println("DirectReceiver消费者收到消息: " + message);
+            System.out.println("DeadLetterReceiver消费者收到死信: " + message);
         }catch (Exception e){
             // 出现异常 拒签
             // deliveryTag：表示消息投递序号。
@@ -44,7 +43,5 @@ public class DirectReceiver {
             // requeue：值为 true 消息将重新入队列。
             channel.basicNack(deliveryTag, false, false);
         }
-
     }
-
 }

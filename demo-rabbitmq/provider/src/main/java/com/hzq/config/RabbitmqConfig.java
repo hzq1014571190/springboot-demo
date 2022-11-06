@@ -1,17 +1,19 @@
 package com.hzq.config;
 
 import com.hzq.common.MQSender;
+import com.hzq.constant.RabbitConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
-import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Administrator
@@ -24,7 +26,7 @@ public class RabbitmqConfig {
     @Autowired
     private CachingConnectionFactory cachingConnectionFactory;
 
-
+//=================== 正常 begin ========================
     /**
      *  新建一个队列并设置持久化
      *
@@ -45,7 +47,18 @@ public class RabbitmqConfig {
      */
     @Bean
     public Queue TestDirectQueue(){
-        return new Queue("TestDirectQueue");
+        Map<String, Object> args = new HashMap<>(4);
+
+        // 绑定死信交换机 声明交换机和routing key
+        // x-dead-letter-exchange：这里声明当前业务队列绑定的死信交换机
+        args.put("x-dead-letter-exchange", RabbitConstant.TEST_DEAD_LETTER_DIRECT_EXCHANGE);
+        // x-dead-letter-routing-key：这里声明当前业务队列的死信路由 key
+        args.put("x-dead-letter-routing-key", RabbitConstant.TEST_DEAD_LETTER_DIRECT_ROUTING_KEY);
+
+        // TODO 设置一下过期时间 以便于测试死信
+        args.put("x-message-ttl", RabbitConstant.QUEUE_MESSAGE_TTL);
+
+        return new Queue(RabbitConstant.TEST_DIRECT_QUEUE, true, false, false, args);
     }
 
 
@@ -54,9 +67,8 @@ public class RabbitmqConfig {
      * @return
      */
     @Bean
-    DirectExchange TestDirectExchange() {
-        //  return new DirectExchange("TestDirectExchange",true,true);
-        return new DirectExchange("TestDirectExchange");
+    public DirectExchange TestDirectExchange() {
+        return new DirectExchange(RabbitConstant.TEST_DIRECT_EXCHANGE);
     }
 
 
@@ -66,10 +78,38 @@ public class RabbitmqConfig {
      * @return
      */
     @Bean
-    Binding bindingDirect() {
-        return BindingBuilder.bind(TestDirectQueue()).to(TestDirectExchange()).with("TestDirectRoutingKey");
+    public Binding bindingDirect() {
+        return BindingBuilder.bind(TestDirectQueue()).to(TestDirectExchange())
+                .with(RabbitConstant.TEST_DIRECT_ROUTING_KEY);
     }
 
+//=================== 正常 end ==========================
+
+
+
+
+
+
+//=================== 死信 begin ========================
+
+    @Bean
+    public Queue deadLetterQueue() {
+        return new Queue(RabbitConstant.TEST_DEAD_LETTER_DIRECT_QUEUE);
+    }
+
+    @Bean
+    public DirectExchange deadLetterExchange(){
+        return new DirectExchange(RabbitConstant.TEST_DEAD_LETTER_DIRECT_EXCHANGE);
+    }
+
+    @Bean
+    public Binding bindingDeadLetter(){
+        return BindingBuilder.bind(deadLetterQueue()).to(deadLetterExchange())
+                .with(RabbitConstant.TEST_DEAD_LETTER_DIRECT_ROUTING_KEY);
+    }
+
+
+//=================== 死信 end ==========================
 
 
     /**
