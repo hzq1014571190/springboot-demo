@@ -113,7 +113,7 @@ public class RabbitmqConfig {
 
 
     /**
-     * 多例的RabbitTemplate
+     * RabbitTemplate
      * @return
      */
     @Bean

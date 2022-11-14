@@ -1,0 +1,10 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: redis-service
+  redis:
+    host: 192.168.200.9
+    port: 6379
+    password: 990825
