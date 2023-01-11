@@ -6,6 +6,7 @@
     <modules>
         <module>demo-rabbitmq</module>
         <module>demo-redis</module>
+        <module>demo-web</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

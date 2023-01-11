@@ -1,6 +1,5 @@
 package com.hzq.service.impl;
 
-import com.hzq.controller.RedisController;
 import com.hzq.service.RedisToolsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +32,7 @@ public class RedisToolsServiceImpl implements RedisToolsService {
     }
 
     /**
-     * @desc 保存
+     * @desc 带过期时间的保存
      */
     @Override
     public Boolean setData(String key, Object value, Long times, TimeUnit tu) {
@@ -41,7 +40,21 @@ public class RedisToolsServiceImpl implements RedisToolsService {
             redisTemplate.opsForValue().set(key, value, times, tu);
             return true;
         } catch (Exception e) {
-            LOGGER.error(e.getMessage().toString());
+            LOGGER.error(e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * @desc 普通保存
+     */
+    @Override
+    public Boolean setData(String key, Object value) {
+        try {
+            redisTemplate.opsForValue().set(key, value);
+            return true;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
             return false;
         }
     }
@@ -51,13 +64,9 @@ public class RedisToolsServiceImpl implements RedisToolsService {
      */
     @Override
     public Boolean isExpireByKey(String key) {
-        if (StringUtils.isEmpty(key)
-                || !redisTemplate.hasKey(key)
-                || redisTemplate.opsForValue().get(key) == null) {
-            return false;
-        }
-
-        return true;
+        return !StringUtils.isEmpty(key)
+                && redisTemplate.hasKey(key)
+                && redisTemplate.opsForValue().get(key) != null;
     }
 
     /**

@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
  * @date 2021-11-05
  * @desc XXL-CONFIG 配置类
  */
-@Configuration
+// @Configuration
 public class XxlConfig {
     @Value("${xxl.config.address}")
     private String adminAddress;

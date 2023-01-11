@@ -3,6 +3,7 @@ package com.hzq.config;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xxl.conf.core.annotation.XxlConf;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -19,31 +20,32 @@ import java.time.Duration;
 
 /**
  * @Author hzq
- * @ClassName com.hzq.config.RdisConfig
- * @Date 2023/1/11 17:13
+ * @ClassName com.hzq.config.RedisConfig
+ * @Date 2022/11/8 20:21
  * @Description
  */
-@Configuration
-public class RedisConfig {
+// @Configuration
+public class RedisConfigWithXXLConfig {
 
 
-    private static final String REDIS_DATABASE = "0";
-
-    private static final String REDIS_PASSWORD = "990825";
-
-    private static final String REDIS_HOST = "192.168.200.6";
-
-    private static final String REDIS_PORT = "6379";
-
-    private static final String REDIS_TIMEOUT = "1000";
-
-    private static  final String REDIS_MAX_POOL_SIZE = "10";
-
-    private static final String REDIS_MAX_POOL_WAIT = "200";
-
-    private static final String REDIS_MAX_IDLE = "8";
-
-    private static final String REDIS_MIN_IDLE = "0";
+    @XxlConf("demo-redis.spring.redis.database")
+    private String redisDatabase;
+    @XxlConf("demo-redis.spring.redis.password")
+    private String redisPassword;
+    @XxlConf("demo-redis.spring.redis.host")
+    private String redisHost;
+    @XxlConf("demo-redis.spring.redis.port")
+    private String redisPort;
+    @XxlConf("demo-redis.spring.redis.timeout")
+    private String redisTimeout;
+    @XxlConf("demo-redis.spring.redis.jedis.pool.max.active")
+    private String redisMaxPoolSize;
+    @XxlConf("demo-redis.spring.redis.jedis.pool.max.wait")
+    private String redisMaxPoolWait;
+    @XxlConf("demo-redis.spring.redis.jedis.pool.max.idle")
+    private String redisMaxIdle;
+    @XxlConf("demo-redis.spring.redis.jedis.pool.min.idle")
+    private String redisMinIdle;
 
 
 
@@ -57,7 +59,7 @@ public class RedisConfig {
         // 开启事务
         redisTemplate.setEnableTransactionSupport(true);
 
-        // 使用Jackson2JsonRedisSerializer来序列化和反序列化redis的value值（替换默认使用JDK的序列化方式）
+        // 使用Jackson2JsonRedisSerializer来序列化和反序列化redis的value值（默认使用JDK的序列化方式）
         Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer =
                 new Jackson2JsonRedisSerializer<>(Object.class);
         ObjectMapper objectMapper = new ObjectMapper();
@@ -85,13 +87,13 @@ public class RedisConfig {
     public RedisConnectionFactory connectionPoolsFactory() {
         JedisPoolConfig poolConfig = new JedisPoolConfig();
         // 最大空闲连接数, 默认8个
-        poolConfig.setMaxIdle(Integer.parseInt(REDIS_MAX_IDLE));
+        poolConfig.setMaxIdle(Integer.parseInt(redisMaxIdle));
         // 最小空闲连接数, 默认0
-        poolConfig.setMinIdle(Integer.parseInt(REDIS_MIN_IDLE));
+        poolConfig.setMinIdle(Integer.parseInt(redisMinIdle));
         // 最大连接数, 默认8个
-        poolConfig.setMaxTotal(Integer.parseInt(REDIS_MAX_POOL_SIZE));
+        poolConfig.setMaxTotal(Integer.parseInt(redisMaxPoolSize));
         // 获取连接时的最大等待毫秒数, 如果不超时设置: -1
-        poolConfig.setMaxWaitMillis(Long.parseLong(REDIS_MAX_POOL_WAIT));
+        poolConfig.setMaxWaitMillis(Long.parseLong(redisMaxPoolWait));
         // 逐出扫描的时间间隔(毫秒) 如果为负数,则不运行逐出线程, 默认-1
         poolConfig.setTimeBetweenEvictionRunsMillis(-1);
         // 在获取连接的时候检查有效性, 默认false
@@ -101,14 +103,14 @@ public class RedisConfig {
 
         JedisClientConfiguration jedisClientConfiguration =
                 JedisClientConfiguration.builder().usePooling().poolConfig(poolConfig).and()
-                        .readTimeout(Duration.ofMillis(Long.parseLong(REDIS_TIMEOUT)))
-                        .connectTimeout(Duration.ofMillis(Long.parseLong(REDIS_TIMEOUT)))
+                        .readTimeout(Duration.ofMillis(Long.parseLong(redisTimeout)))
+                        .connectTimeout(Duration.ofMillis(Long.parseLong(redisTimeout)))
                         .build();
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
-        redisStandaloneConfiguration.setDatabase(Integer.parseInt(REDIS_DATABASE));
-        redisStandaloneConfiguration.setHostName(REDIS_HOST);
-        redisStandaloneConfiguration.setPassword(REDIS_PASSWORD == null ? "" : REDIS_PASSWORD);
-        redisStandaloneConfiguration.setPort(Integer.parseInt(REDIS_PORT));
+        redisStandaloneConfiguration.setDatabase(Integer.parseInt(redisDatabase));
+        redisStandaloneConfiguration.setHostName(redisHost);
+        redisStandaloneConfiguration.setPassword(redisPassword == null ? "" : redisPassword);
+        redisStandaloneConfiguration.setPort(Integer.parseInt(redisPort));
         JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory(redisStandaloneConfiguration, jedisClientConfiguration);
         jedisConnectionFactory.afterPropertiesSet();
         return jedisConnectionFactory;

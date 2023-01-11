@@ -5,6 +5,6 @@ spring:
   application:
     name: redis-service
   redis:
-    host: 192.168.200.9
+    host: 192.168.200.6
     port: 6379
     password: 990825
