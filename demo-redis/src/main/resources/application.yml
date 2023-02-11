@@ -1,3 +1,6 @@
+spring:
+  rabbitmq:
+    port: 8863
 server:
   port: 8888
 

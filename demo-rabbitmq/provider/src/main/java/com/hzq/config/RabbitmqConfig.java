@@ -46,7 +46,7 @@ public class RabbitmqConfig {
      * @return
      */
     @Bean
-    public Queue TestDirectQueue(){
+    public Queue testDirectQueue(){
         Map<String, Object> args = new HashMap<>(4);
 
         // 绑定死信交换机 声明交换机和routing key
@@ -67,7 +67,7 @@ public class RabbitmqConfig {
      * @return
      */
     @Bean
-    public DirectExchange TestDirectExchange() {
+    public DirectExchange testDirectExchange() {
         return new DirectExchange(RabbitConstant.TEST_DIRECT_EXCHANGE);
     }
 
@@ -79,7 +79,7 @@ public class RabbitmqConfig {
      */
     @Bean
     public Binding bindingDirect() {
-        return BindingBuilder.bind(TestDirectQueue()).to(TestDirectExchange())
+        return BindingBuilder.bind(testDirectQueue()).to(testDirectExchange())
                 .with(RabbitConstant.TEST_DIRECT_ROUTING_KEY);
     }
 
