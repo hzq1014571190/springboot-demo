@@ -21,7 +21,7 @@ import java.util.Map;
 @Configuration
 public class RabbitmqConfig {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MQSender.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RabbitmqConfig.class);
 
     @Autowired
     private CachingConnectionFactory cachingConnectionFactory;
@@ -113,7 +113,7 @@ public class RabbitmqConfig {
 
 
     /**
-     * 多例的RabbitTemplate
+     * RabbitTemplate
      * @return
      */
     @Bean
